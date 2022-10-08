@@ -56,16 +56,14 @@ class WindowClass(QMainWindow, form_class):
 
 
     def load_dataset(self):
-        self.categories = DatasetCounting('../외주/Crash Statistics Victoria.csv')
-        self.categories.load_categories()
-        # progressbar_widget = ProgressBar()
-        # progressbar_widget.show()
-        # date_dict = {}
-        # for idx, date in enumerate((crash_dates)):
-        #     date_dict[date] = df[df.ACCIDENT_DATE == date]
-        #     progressbar_widget.progressBar.setValue(idx)
-        # progressbar_widget.close()
-        crash_dates = list(self.categories.crashed_dates.keys())
+        # self.categories = DatasetCounting('../외주/Crash Statistics Victoria.csv')
+        # self.categories.load_categories()
+        # crash_dates = list(self.categories.crashed_dates.keys())
+        import json
+        with open('test_db.json', 'r') as file:
+            data = file.read()
+        self.crash_dates = json.loads(data)
+        crash_dates = list(self.crash_dates.keys())
         minimum_date = crash_dates[0].split('/')
         maximum_date = crash_dates[-1].split('/')
         self.minimum_date = QDate(int(minimum_date[2]), int(minimum_date[1]), int(minimum_date[0]))
@@ -74,7 +72,9 @@ class WindowClass(QMainWindow, form_class):
     def get_date(self, date):
         year, month, day = date.getDate()
         self.day_of_week = day_of_week(date.dayOfWeek())
-        self.date = f'{year}/{month}/{day}'
+        # self.date = f'{year}/{month}/{day}'
+        self.date = f'{day}/{month}/{year}'
+
 
     def show_chart(self, btn_type):
         if self.date is None:
