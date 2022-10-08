@@ -7,11 +7,15 @@ from collections import Counter
 class DatasetCounting:
     def __init__(self, csv_path):
         # df = pd.read_csv('/Users/hongsung-yong/Downloads/외주/Crash Statistics Victoria.csv')
-        df = pd.read_csv(csv_path)
-        crash_dates = sorted(list(set(df.ACCIDENT_DATE.tolist())))
+        self.df = pd.read_csv(csv_path)
+
         # acc_type = list(set(df.ACCIDENT_TYPE.tolist()))
         location_lst = ['LGA_NAME', 'DEG_URBAN_NAME', 'LGA_NAME_ALL', 'SRNS', 'RMA']
         self.crashed_dates = {}
+
+
+    def load_categories(self):
+        crash_dates = sorted(list(set(self.df.ACCIDENT_DATE.tolist())))
         for date in tqdm(crash_dates):
             self.crashed_dates[date] = {}
             acc_dict = self.crashed_dates[date]
