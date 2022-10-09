@@ -11,7 +11,6 @@ widget_ui = uic.loadUiType("ui/progressbar.ui")[0]
 # crash_dates = sorted(list(set(df.ACCIDENT_DATE.tolist())))
 
 import numpy as np
-from tqdm import tqdm
 
 import pandas as pd
 from collections import Counter

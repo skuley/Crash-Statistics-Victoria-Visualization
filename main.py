@@ -42,28 +42,35 @@ class WindowClass(QMainWindow, form_class):
 
         self.calendarWidget.clicked.connect(self.get_date)
         self.date = None
+        self.prev = None
+        self.count = 0
 
-        self.time_btn.clicked.connect(lambda :self.show_chart("time"))
+        self.time_btn.clicked.connect(lambda :self.show_chart("hours"))
         self.crash_type_btn.clicked.connect(lambda :self.show_chart("crash_type"))
         self.road_user_type_btn.clicked.connect(lambda :self.show_chart("road_user_type"))
-        self.location_btn.clicked.connect(lambda :self.show_chart("location"))
+        self.location_btn.clicked.connect(lambda :self.show_chart("locations"))
         self.obj_hit_btn.clicked.connect(lambda :self.show_chart("obj_hit"))
         self.conditions_btn.clicked.connect(lambda :self.show_chart('conditions'))
 
-        self.figure, (self.ax1, self.ax2) = plt.subplots(1,2)
+        self.figure, (self.ax1, self.ax2) = plt.subplots(2,1)
         self.canvas = FigureCanvasQTAgg(self.figure.axes[0].figure)
         self.verticalLayout_5.addWidget(self.canvas)
 
 
     def load_dataset(self):
-        # self.categories = DatasetCounting('../외주/Crash Statistics Victoria.csv')
-        # self.categories.load_categories()
-        # crash_dates = list(self.categories.crashed_dates.keys())
-        import json
-        with open('test_db.json', 'r') as file:
-            data = file.read()
-        self.crash_dates = json.loads(data)
-        crash_dates = list(self.crash_dates.keys())
+        # TODO: csv file directory
+        self.categories = DatasetCounting('db/Crash Statistics Victoria.csv')
+        self.categories.load_categories()
+        crash_dates = list(self.categories.crashed_dates.keys())
+
+        # -----------------------------------------------------------------------------
+        # import json
+        # with open('test_db.json', 'r') as file:
+        #     data = file.read()
+        # self.crash_dates = json.loads(data)
+        # crash_dates = list(self.crash_dates.keys())
+        # -----------------------------------------------------------------------------
+
         minimum_date = crash_dates[0].split('/')
         maximum_date = crash_dates[-1].split('/')
         self.minimum_date = QDate(int(minimum_date[2]), int(minimum_date[1]), int(minimum_date[0]))
@@ -71,49 +78,48 @@ class WindowClass(QMainWindow, form_class):
 
     def get_date(self, date):
         year, month, day = date.getDate()
-        self.day_of_week = day_of_week(date.dayOfWeek())
+        # self.day_of_week = day_of_week(date.dayOfWeek())
         # self.date = f'{year}/{month}/{day}'
         self.date = f'{day}/{month}/{year}'
+        self.count = 0
+        self.prev = None
 
 
     def show_chart(self, btn_type):
         if self.date is None:
             QMessageBox.warning(self, "Alert", "select date first")
         else:
-            # self.figure.clear()
+            graph_data = self.crash_dates[self.date][btn_type]
             self.ax1.clear()
             self.ax2.clear()
-            # self.figure2.clear()
-            if btn_type == 'time':
-                key = ['apples', 'Oranges', 'Coconuts', 'Pas']
-                values = [1, 2, 3, 4]
-            elif btn_type =='crash_type':
-                key = ['apples', 'Oranges', 'Coconuts', 'Pas']
-                values = [4, 3, 2, 1]
-            elif btn_type == 'road_user_type':
-                key = ['apples', 'Oranges', 'Coconuts', 'Pas']
-                values = [1, 3, 2, 4]
-            elif btn_type == 'location':
-                key = ['apples', 'Oranges', 'Coconuts', 'Pas']
-                values = [1, 1, 2, 4]
-            elif btn_type == 'obj_hit':
-                key = ['apples', 'Oranges', 'Coconuts', 'Pas']
-                values = [1, 5, 3, 4]
-            elif btn_type == 'conditions':
-                key = ['apples', 'Oranges', 'Coconuts', 'Pas']
-                values = [1, 2, 2, 4]
+            if btn_type == 'hours':
+                if self.prev == None:
+                    self.prev = btn_type
+                x, y = list(graph_data.keys()), list(graph_data.values())
+            else:
+                if self.prev == btn_type:
+                    self.count += 1
+                else:
+                    self.prev = btn_type
+                    self.count = 0
+                length = len(graph_data.keys()) - 1
+                if self.count > length:
+                    self.count = 0
+                data = graph_data[list(graph_data.keys())[self.count]]
+                print(data.keys())
+                x, y = list(data.keys()), list(data.values())
 
-            self.plot_canvas(key, values)
-    def plot_canvas(self, key, values):
-        print(values)
+            self.plot_canvas(x, y, btn_type)
+
+
+    def plot_canvas(self, key, values, btn_type):
+        self.ax1.set_title(btn_type)
         self.ax1.bar(key, values, color='red', width=0.5)
         total = sum(values)
         self.ax2.pie([value/total for value in values])
         # plt.plot(values)
 
-        plt.xlabel("test1")
-        plt.ylabel('test2')
-        plt.title('test3')
+
         self.canvas.draw()
         # self.canvas2.draw()
 

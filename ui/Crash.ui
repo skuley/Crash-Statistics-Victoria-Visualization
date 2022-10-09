@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>759</width>
-    <height>470</height>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>640</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -33,7 +39,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -47,7 +53,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>2796202</height>
+           <height>640</height>
           </size>
          </property>
          <property name="baseSize">
@@ -89,7 +95,11 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item alignment="Qt::AlignLeft|Qt::AlignTop">
-           <widget class="QCalendarWidget" name="calendarWidget"/>
+           <widget class="QCalendarWidget" name="calendarWidget">
+            <property name="locale">
+             <locale language="English" country="UnitedStates"/>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
